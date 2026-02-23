@@ -10,7 +10,7 @@ depends=('gtk3' 'nss' 'alsa-lib')
 options=('!strip')
 
 source=("fluxer.desktop")
-sha256sums=('c4f29013726c32cd70e9dfa830dc49895ea3824d302d8963cd6cd39d6cb54711')
+sha256sums=('9094f65296748809d08cf3ea70c686fbfd80e484e354e4014de089ec3d99e466')
 
 source_x86_64=("fluxer-${pkgver}-x64.tar.gz::https://api.fluxer.app/dl/desktop/stable/linux/x64/latest/tar_gz")
 sha256sums_x86_64=('acf6398fa6810720fed85b06c011b324e7db4fec6bf2fc7ad93c2446c3600f2d')
