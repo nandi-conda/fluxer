@@ -65,17 +65,19 @@ This repository uses GitHub Actions to:
 2. Publish packages to the nandi-conda channel on prefix.dev
 3. Create GitHub releases when tags are pushed
 
+### Pre-push Validation
+
+**Always build and test your recipe locally before pushing**:
+
+```bash
+rattler-build build --recipe recipe.yaml
+```
+
+This catches syntax errors and configuration issues early, avoiding CI failures.
+
 ### Secrets
 
-The following secret must be configured in the repository:
-
-- `PREFIX_API_KEY`: API key for uploading to prefix.dev (nandi-conda channel)
-
-To set up the secret:
-1. Go to repository Settings → Secrets and variables → Actions
-2. Click "New repository secret"
-3. Name: `PREFIX_API_KEY`
-4. Value: Your prefix.dev API token (get it from https://prefix.dev/channels/nandi-conda/settings)
+No secrets need to be configured for nandi-conda repositories. The `PREFIX_API_KEY` is an org-level secret and is automatically available to all nandi-conda organization repositories.
 
 ## License
 
