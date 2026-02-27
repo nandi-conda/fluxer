@@ -79,6 +79,10 @@ This catches syntax errors and configuration issues early, avoiding CI failures.
 
 No secrets need to be configured for nandi-conda repositories. The `PREFIX_API_KEY` is an org-level secret and is automatically available to all nandi-conda organization repositories.
 
+### Known Issues
+
+The Fluxer API (`https://api.fluxer.app`) is currently returning 503 errors, which prevents builds from completing. The recipe structure is valid and will build successfully once the API is operational.
+
 ## License
 
 AGPL-3.0
