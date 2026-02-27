@@ -1,7 +1,7 @@
 # Build and Publish Conda Package
 #
 # IMPORTANT: Always build and test your recipe locally before pushing:
-#   rattler-build build --recipe recipe.yaml --output-dir ./output
+#   rattler-build build --recipe recipe.yaml
 #
 # This catches syntax errors and configuration issues early, avoiding CI failures.
 #
@@ -12,86 +12,37 @@ name: Build and Publish Conda Package
 
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
+      - master
     tags:
-      - 'v*'
+      - "v*"
   pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:
 
 jobs:
   build-and-publish:
     strategy:
       matrix:
-        include:
-          - arch: x86_64
-            platform: linux-64
-          - arch: aarch64
-            platform: linux-aarch64
-
+        platform: [linux-64, linux-aarch64]
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Set up QEMU (for aarch64)
         uses: docker/setup-qemu-action@v3
         with:
           platforms: linux/arm64
-
-      - name: Build with rattler-build
-        uses: prefix-dev/rattler-build-action@v0.3.0
-        with:
-          version: latest
-          upload: "false"
-          args: >
-            build --recipe recipe.yaml
-            --target-platform ${{ matrix.platform }}
-            --output-dir ./output
-            --experimental
-
-      - name: Upload package artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: conda-package-${{ matrix.platform }}
-          path: output/**/*.tar.bz2
-          retention-days: 7
-
-      - name: Publish to prefix.dev
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
-        uses: prefix-dev/rattler-build-action@v0.3.0
-        with:
-          command: upload
-          args: >
-            -c nandi-conda
-            ./output/**/*.tar.bz2
+      - name: Install rattler-build
+        run: |
+          arch=$(uname -m)
+          if [ "$arch" = "arm64" ]; then arch="aarch64"; fi
+          curl -fsSL "https://github.com/prefix-dev/rattler-build/releases/latest/download/rattler-build-${arch}-unknown-linux-musl" \
+            -o /usr/local/bin/rattler-build
+          chmod +x /usr/local/bin/rattler-build
+      - name: Build package
+        run: rattler-build build --recipe recipe.yaml --target-platform ${{ matrix.platform }}
+      - name: Upload to prefix.dev
+        if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         env:
           PREFIX_API_KEY: ${{ secrets.PREFIX_API_KEY }}
+        run: rattler-build upload prefix --channel nandi-conda --force output/**/*.conda
 
-  create-release:
-    needs: build-and-publish
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./artifacts
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./artifacts/**/*.tar.bz2
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
