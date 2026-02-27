@@ -1,0 +1,25 @@
+# Build artifacts
+output/
+*.tar.bz2
+*.conda
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+
+# Conda build
+build/
+build_artifacts/

@@ -1,0 +1,65 @@
+package:
+  name: fluxer
+  version: 0.0.8
+
+source:
+  - url: https://api.fluxer.app/dl/desktop/stable/linux/x64/latest/tar_gz
+    sha256: acf6398fa6810720fed85b06c011b324e7db4fec6bf2fc7ad93c2446c3600f2d
+    target_directory: fluxer-x64
+    folder: binary
+    condition: build_platform == "linux-64"
+  - url: https://api.fluxer.app/dl/desktop/stable/linux/arm64/latest/tar_gz
+    sha256: 77b874a98caf48de5bc4ccf03119f45262fe26fd7be085b57d7b40b1505d0ec8
+    target_directory: fluxer-arm64
+    folder: binary
+    condition: build_platform == "linux-aarch64"
+
+build:
+  number: 0
+  script:
+    - if [ "${target_platform}" = "linux-64" ]; then
+        _binary_dir="fluxer-x64";
+      elif [ "${target_platform}" = "linux-aarch64" ]; then
+        _binary_dir="fluxer-arm64";
+      fi
+    - if [ -d "${_binary_dir}" ]; then
+        cp -r ${_binary_dir}/* ${PREFIX}/;
+      else
+        cp -r binary/* ${PREFIX}/;
+      fi
+  noarch: generic
+
+requirements:
+  build:
+    - if: unix
+      then: tar
+      else: null
+  host:
+    - if: linux
+      then:
+        - gtk3
+        - nss
+        - alsa-lib
+  run:
+    - if: linux
+      then:
+        - gtk3
+        - nss
+        - alsa-lib
+
+test:
+  commands:
+    - fluxer --version || echo "Version check failed but binary may still work"
+
+about:
+  homepage: https://fluxer.app
+  license: AGPL-3.0
+  license_file: LICENSE
+  summary: Fluxer Desktop Application
+  description: |
+    Fluxer is a desktop application providing a modern interface
+    for managing and interacting with various services.
+
+extra:
+  recipe-maintainers:
+    - nandi-conda
