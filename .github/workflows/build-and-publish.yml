@@ -1,3 +1,13 @@
+# Build and Publish Conda Package
+#
+# IMPORTANT: Always build and test your recipe locally before pushing:
+#   rattler-build build --recipe recipe.yaml --output-dir ./output
+#
+# This catches syntax errors and configuration issues early, avoiding CI failures.
+#
+# For nandi-conda repositories, PREFIX_API_KEY is an org-level secret - no need
+# to configure per-repository.
+
 name: Build and Publish Conda Package
 
 on:
