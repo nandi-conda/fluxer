@@ -10,7 +10,6 @@ build:
   number: 0
   script:
     - cp -r * ${PREFIX}/
-  noarch: generic
 
 requirements:
   build:
