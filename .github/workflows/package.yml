@@ -13,8 +13,6 @@ jobs:
   package:
     uses: nandi-conda/ci/.github/workflows/conda-package.yml@main
     secrets: inherit
-    with:
-      channel: nandi-conda
     permissions:
       contents: read
       id-token: write
