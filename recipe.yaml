@@ -37,7 +37,6 @@ tests:
 about:
   homepage: https://fluxer.app
   license: AGPL-3.0-only
-  license_file: LICENSE
   summary: Fluxer Desktop Application
   description: |
     Fluxer is a desktop application providing a modern interface
